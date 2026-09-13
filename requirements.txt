@@ -1,0 +1,8 @@
+numpy>=1.26,<3
+pandas>=2.2,<3
+scipy>=1.14,<2
+matplotlib>=3.9,<4
+geopandas>=1.0,<2
+geobr>=2.0,<2.1
+jupyterlab>=4.2,<5
+ipykernel>=6.29,<8
