@@ -3,6 +3,8 @@ venv/
 .env
 __pycache__/
 .ipynb_checkpoints/
-*.egg-info/
 data/*.csv
-data/raw/*.csv
+data/raw/*
+!data/raw/.gitkeep
+outputs/models/
+.tmp/

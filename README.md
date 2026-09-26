@@ -1,8 +1,16 @@
-# Acidentes rodoviários — trabalho de IA
+# Acidentes rodoviários sob mudança temporal
 
-Trabalho de graduação sobre aprendizagem de máquina e mudança temporal nos acidentes da PRF. O plano é implementar Softmax em NumPy, comparar com scikit-learn e usar uma MLP nos experimentos temporais.
+Projeto de classificação da severidade de ocorrências registradas pela Polícia Rodoviária Federal. O pipeline compara uma regressão Softmax implementada em NumPy com uma implementação do scikit-learn e avalia uma MLP nos cenários histórico, fine-tuning, retreinamento completo e treinamento somente com dados recentes.
 
-**Primeira entrega:** auditoria e análise exploratória no [notebook 01](notebooks/01_data_audit_eda.ipynb). A preparação fica no próprio notebook; arquivos `.py` serão usados principalmente para os modelos implementados à mão.
+## Uso de IA generativa
+
+A ferramenta foi utilizada para auxiliar no código, como na implementação do modelo MLP em Keras, e para esclarecer dúvidas na implementação da regressão logística. Também foi utilizada para revisão do paper.
+
+## Requisitos
+
+- Python 3.12
+- [uv](https://docs.astral.sh/uv/) (recomendado) ou `pip`
+- JupyterLab
 
 ## Dados
 
@@ -30,7 +38,7 @@ uv sync --locked
 uv run jupyter lab
 ```
 
-Abra `notebooks/01_data_audit_eda.ipynb` e execute as células na ordem. No VS Code, selecione `.venv/Scripts/python.exe` como kernel.
+Execute os notebooks na ordem abaixo, sempre do início ao fim. No VS Code, selecione `.venv/Scripts/python.exe` como kernel.
 
 Alternativa sem uv:
 
@@ -49,7 +57,21 @@ python -m venv .venv
 3. Ajuste `PROJECT_ROOT` na primeira célula se sua pasta tiver outro nome.
 4. Execute tudo na ordem e autorize a montagem do Drive.
 
-A primeira célula concentra a configuração dos dois ambientes. No Colab, instala o geobr e monta o Drive; as demais células são iguais. Não é necessário clonar o projeto ou importar módulos locais.
+A primeira célula concentra a configuração dos dois ambientes, a montagem do Drive e a instalação das dependências. As demais células são iguais. Não é necessário clonar o projeto ou importar módulos locais. Guarde todos os notebooks no mesmo projeto do Drive para que compartilhem dados e artefatos.
+
+## Ordem dos notebooks
+
+| Notebook | Responsabilidade |
+|---|---|
+| [01 — Auditoria e AED](notebooks/01_data_audit_eda.ipynb) | Limpeza estrutural, mapas e splits cronológicos 60/20/20 |
+| [02 — Drift](notebooks/02_drift_analysis.ipynb) | Distribuições de atributos e alvo, KS e comparações categóricas |
+| [03 — Softmax do zero](notebooks/03_softmax_regression.ipynb) | Gradiente em NumPy, verificação numérica e comparação com scikit-learn |
+| [04 — Seleção](notebooks/04_model_selection.ipynb) | Seleção temporal da MLP em D0 |
+| [05 — Experimentos temporais](notebooks/05_temporal_experiments.ipynb) | M0, MFT, MRT e MREC com avaliação final em D2 |
+| [06 — Resultados](notebooks/06_results.ipynb) | Métricas, matrizes de confusão, explicabilidade e análise de erros |
+| [07 — Diário de experimentos](notebooks/07_experiment_log.ipynb) | Registro das execuções relevantes |
+
+Os notebooks aceitam como diretório atual tanto a raiz do projeto quanto a pasta `notebooks/`.
 
 ## Organização
 
@@ -57,15 +79,10 @@ A primeira célula concentra a configuração dos dois ambientes. No Colab, inst
 data/raw/           CSVs originais
 data/               splits d0.csv, d1.csv e d2.csv
 notebooks/          preparação, análises e experimentos
-outputs/figures/    imagens da AED e mapas
+outputs/figures/      imagens da AED, drift, modelos e resultados
+outputs/metrics/      métricas, previsões e análises
+outputs/models/       configurações e pesos necessários
+outputs/experiments/  diário de experimentos
 ```
 
-As tabelas de auditoria aparecem no notebook. Os conjuntos `d0`, `d1` e `d2` são salvos em `data/d0.csv`, `data/d1.csv` e `data/d2.csv`. As figuras ficam em `outputs/figures/`. Os mapas usam geobr e precisam de internet no primeiro carregamento.
-
-Para carregar um split nos próximos notebooks, use UTF-8, separador `;`, BR como categoria e parsing do timestamp:
-
-```python
-d0 = pd.read_csv(DATA_DIR / "d0.csv", sep=";", encoding="utf-8", dtype={"br": "string"}, parse_dates=["timestamp"])
-```
-
-Os CSVs preservam colunas de auditoria e mapas; para modelagem, selecionar apenas as features previstas, excluindo identificadores e informações de vítimas.
+Os mapas do notebook 01 usam `geobr` e precisam de internet no primeiro carregamento. Dados brutos, splits e pesos dos modelos ficam fora do Git.
